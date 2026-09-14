@@ -8,6 +8,8 @@ services:
       - "8080:8080"
     environment:
       PORT: "8080"
+      RATE_LIMIT_RPS: "5"
+      RATE_LIMIT_BURST: "20"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/"]
       interval: 5s
@@ -25,6 +27,8 @@ services:
     environment:
       PORT: "8080"
       NODE_ENV: production
+      RATE_LIMIT_RPS: "5"
+      RATE_LIMIT_BURST: "20"
     healthcheck:
       test:
         [
