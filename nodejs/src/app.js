@@ -1,7 +1,7 @@
 import express from "express";
 import helmet from "helmet";
 
-const HELLO = "hello world-node\n";
+const HELLO = "hello world-nodes\n";
 
 export function createApp() {
   const app = express();
