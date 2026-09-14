@@ -1,0 +1,30 @@
+# Local process control
+.run/
+*.pid
+
+# Env
+.env
+.env.local
+*.env
+
+# Go
+golang/bin/
+*.exe
+*.test
+*.out
+vendor/
+
+# Node
+nodejs/node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Coverage
+coverage/
+coverage.out
