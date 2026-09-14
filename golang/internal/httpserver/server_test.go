@@ -13,7 +13,7 @@ func TestHelloRoutes(t *testing.T) {
 	t.Parallel()
 
 	logger := slog.New(slog.NewJSONHandler(io.Discard, nil))
-	srv := New("8080", logger)
+	srv := New("8080", logger, nil)
 
 	cases := []struct {
 		name       string
@@ -50,4 +50,8 @@ func TestHelloRoutes(t *testing.T) {
 			}
 		})
 	}
+}
+
+func discardLogger() *slog.Logger {
+	return slog.New(slog.NewJSONHandler(io.Discard, nil))
 }

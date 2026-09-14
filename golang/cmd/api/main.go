@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -20,7 +21,10 @@ func main() {
 		port = "8080"
 	}
 
-	srv := httpserver.New(port, logger)
+	lim := newLimiterFromEnv()
+	defer lim.Stop()
+
+	srv := httpserver.New(port, logger, lim)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -46,4 +50,40 @@ func main() {
 		}
 		logger.Info("golang-api stopped")
 	}
+}
+
+func newLimiterFromEnv() *httpserver.IPLimiter {
+	rps := envFloat("RATE_LIMIT_RPS", 5)
+	if rps <= 0 {
+		return nil
+	}
+	return httpserver.NewIPLimiter(httpserver.LimitConfig{
+		RatePerSec: rps,
+		Burst:      envInt("RATE_LIMIT_BURST", 20),
+		MaxKeys:    envInt("RATE_LIMIT_MAX_KEYS", 10000),
+	})
+}
+
+func envFloat(key string, fallback float64) float64 {
+	raw := os.Getenv(key)
+	if raw == "" {
+		return fallback
+	}
+	n, err := strconv.ParseFloat(raw, 64)
+	if err != nil || n < 0 {
+		return fallback
+	}
+	return n
+}
+
+func envInt(key string, fallback int) int {
+	raw := os.Getenv(key)
+	if raw == "" {
+		return fallback
+	}
+	n, err := strconv.Atoi(raw)
+	if err != nil || n < 0 {
+		return fallback
+	}
+	return n
 }

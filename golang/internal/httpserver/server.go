@@ -15,12 +15,16 @@ type Server struct {
 }
 
 // New returns an HTTP server that listens on 0.0.0.0:port.
-func New(port string, logger *slog.Logger) *Server {
+// Pass a nil limiter to disable rate limiting (tests).
+func New(port string, logger *slog.Logger, lim *IPLimiter) *Server {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /{$}", handleHello)
 	mux.HandleFunc("POST /{$}", handleHello)
 
-	handler := withRequestLog(logger, http.MaxBytesHandler(mux, 32<<10))
+	handler := withRequestLog(
+		logger,
+		withRateLimit(lim, http.MaxBytesHandler(mux, 32<<10)),
+	)
 
 	return &Server{
 		Server: &http.Server{
