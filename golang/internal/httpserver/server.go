@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const helloBody = "hello world-golang\n"
+const helloBody = "hello world-golangs\n"
 
 // Server is the golang-api HTTP server.
 type Server struct {
