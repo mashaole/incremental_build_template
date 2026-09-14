@@ -39,8 +39,15 @@ stops everything.
 | golang-api | http://127.0.0.1:8080/ |
 | nodejs-api | http://127.0.0.1:8081/ |
 
-Both accept `GET /` and `POST /`. Go responds with `hello world-golang`;
-Node responds with `hello world-node`.
+Both accept `GET /` and `POST /`. Go responds with `hello world-golangs`;
+Node responds with `hello world-nodes`.
+
+Per-IP rate limit (in-process token bucket): **5 requests/sec**, burst **20**.
+Tune with `RATE_LIMIT_RPS`, `RATE_LIMIT_BURST`, and `RATE_LIMIT_MAX_KEYS`.
+Set `RATE_LIMIT_RPS=0` to disable. This is **per Cloud Run instance**; for
+project-wide throttling add Cloud Armor in front of the services.
+
+Exceeded clients get `429` and `Retry-After: 1`.
 
 If Docker is not running, `make start*` uses native processes and writes
 pids/logs under `.run/`. `make stop` tears down containers **and** native
