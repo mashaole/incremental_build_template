@@ -49,6 +49,43 @@ project-wide throttling add Cloud Armor in front of the services.
 
 Exceeded clients get `429` and `Retry-After: 1`.
 
+### Calling each other
+
+Each service has one env var: the other service’s base URL. Empty means
+localhost.
+
+| Variable | Service | Default if unset |
+|----------|---------|------------------|
+| `NODEJS_URL` | golang-api | `http://127.0.0.1:8081` |
+| `GOLANG_URL` | nodejs-api | `http://127.0.0.1:8080` |
+
+`GET /call-nodejs` on Go does `GET {NODEJS_URL}/` and returns that body.
+`GET /call-golang` on Node does `GET {GOLANG_URL}/` and returns that body.
+
+Cloud Run (project `incremental-build-template`):
+
+```text
+# golang-api
+NODEJS_URL=https://nodejs-api-64192940138.europe-west1.run.app
+
+# nodejs-api
+GOLANG_URL=https://golang-api-64192940138.europe-west1.run.app
+```
+
+Local:
+
+```bash
+curl http://127.0.0.1:8080/call-nodejs    # hello world-nodes
+curl http://127.0.0.1:8081/call-golang    # hello world-golangs
+```
+
+After deploy (and those env vars set in the Cloud Run UI):
+
+```bash
+curl https://golang-api-64192940138.europe-west1.run.app/call-nodejs
+curl https://nodejs-api-64192940138.europe-west1.run.app/call-golang
+```
+
 If Docker is not running, `make start*` uses native processes and writes
 pids/logs under `.run/`. `make stop` tears down containers **and** native
 pids.
