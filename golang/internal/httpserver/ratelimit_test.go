@@ -41,7 +41,7 @@ func TestRateLimitHTTPStatus(t *testing.T) {
 	t.Cleanup(lim.Stop)
 
 	logger := discardLogger()
-	srv := New("8080", logger, lim)
+	srv := New("8080", logger, lim, "http://127.0.0.1:8081")
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	req.RemoteAddr = "203.0.113.9:4000"
 

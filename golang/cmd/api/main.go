@@ -24,7 +24,14 @@ func main() {
 	lim := newLimiterFromEnv()
 	defer lim.Stop()
 
-	srv := httpserver.New(port, logger, lim)
+	nodejsURL, err := httpserver.HTTPBaseURL(os.Getenv("NODEJS_URL"), "http://127.0.0.1:8081")
+	if err != nil {
+		logger.Error("invalid NODEJS_URL", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
+
+	srv := httpserver.New(port, logger, lim, nodejsURL)
+	logger.Info("nodejs_url", slog.String("url", nodejsURL))
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
