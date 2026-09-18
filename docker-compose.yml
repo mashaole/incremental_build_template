@@ -10,6 +10,7 @@ services:
       PORT: "8080"
       RATE_LIMIT_RPS: "5"
       RATE_LIMIT_BURST: "20"
+      NODEJS_URL: "http://nodejs:8080"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/"]
       interval: 5s
@@ -29,6 +30,7 @@ services:
       NODE_ENV: production
       RATE_LIMIT_RPS: "5"
       RATE_LIMIT_BURST: "20"
+      GOLANG_URL: "http://golang:8080"
     healthcheck:
       test:
         [
